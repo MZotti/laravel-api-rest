@@ -2,63 +2,60 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Api\ApiMessages;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\ProductImage;
+use App\Http\Requests\ProductImagesRequest;
+use Illuminate\Support\Facades\Storage;
 
-class ProductImgesController extends Controller
+class ProductImagesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
+    private $productImage; 
+
+    public function __construct(ProductImage $productImage)
+    {   
+        $this->productImage = $productImage;
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function setThumb($imageId, $productId)
     {
-        //
+        try{
+            $image = $this->productImage->where('product_id', $productId)->where('is_thumb', 1);
+
+            if($image->count()) $image->first()->update(['is_thumb' => false]);
+
+            $image = $this->productImage->find($imageId);
+            $image->update(['is_thumb' => true]);
+
+            return response()->json([
+                'data' => [
+                    'msg' => 'Thumb atualizada com sucesso!'
+                ]
+            ], 200);
+        }catch(\Exception $e){
+            $message = new ApiMessages($e->getMessage());
+            return response()->json($message->getMessage(), 401);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function remove($imageId)
     {
-        //
-    }
+        try{
+            $image = $this->productImage->find($imageId);
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
+            if($image){
+                Storage::disk('public')->delete($image->image);
+                $image->delete;
+            }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+            return response()->json([
+                'data' => [
+                    'msg' => 'Imagem removida com sucesso!'
+                ]
+            ], 200);
+        }catch(\Exception $e){
+            $message = new ApiMessages($e->getMessage());
+            return response()->json($message->getMessage(), 401);
+        }
     }
 }

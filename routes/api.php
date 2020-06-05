@@ -25,4 +25,8 @@ Route::namespace('Api')->group(function(){
     Route::name('tags.')->group(function(){
         Route::resource('tags', 'TagsController');
     });
+    Route::name('images.')->prefix('images')->group(function(){
+        Route::delete('/{id}', 'ProductImagesController@remove')->name('delete');
+        Route::patch('/set-thumb/{photoId}/{realStateId}', 'ProductImagesController@setThumb')->name('setThumb');
+    });
 });

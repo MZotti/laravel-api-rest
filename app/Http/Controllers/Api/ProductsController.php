@@ -26,7 +26,7 @@ class ProductsController extends Controller
     public function store(ProductRequest $request)
     {
         $data = $request->all();
-        //$images = $request->file('images');
+        $images = $request->file('images');
 
         try{
             $product = $this->product->create($data);
@@ -35,17 +35,17 @@ class ProductsController extends Controller
                 $product->tags()->sync($data['tags']);
             }
 
-            /*if($images){
+            if($images){
                 $imagesUploaded = [];
 
                 foreach($images as $image){
                     $path = $image->store('images', 'public');
-                    $imagesUploaded[] = ['photo' => $path, 'is_thumb' => false];
+                    $imagesUploaded[] = ['image_name' => $path, 'is_thumb' => false];
                 }
 
-                $realState->photos()->createMany($imagesUploaded);
+                $product->images()->createMany($imagesUploaded);
             }
-            */
+            
             return response()->json([
                 'data' => [
                     'msg' => 'Produto cadastrado com sucesso!'
@@ -61,7 +61,6 @@ class ProductsController extends Controller
     {
         try{
             $product = $this->product->with('tags')->findOrFail($id);
-            //$product = $this->product->findOrFail($id);
 
             return response()->json([
                 'msg' => 'Produto encontrado!',
@@ -76,7 +75,7 @@ class ProductsController extends Controller
     public function update(ProductRequest $request, $id)
     {
         $data = $request->all();
-        //$images = $request->file('images');
+        $images = $request->file('images');
 
         try{
             $product = $this->product->findOrFail($id);
@@ -86,16 +85,16 @@ class ProductsController extends Controller
                 $product->tags()->sync($data['tags']);
             }
 
-            /*if($images){
+            if($images){
                 $imagesUploaded = [];
 
                 foreach($images as $image){
                     $path = $image->store('images', 'public');
-                    $imagesUploaded[] = ['photo' => $path, 'is_thumb' => false];
+                    $imagesUploaded[] = ['image_name' => $path, 'is_thumb' => false];
                 }
 
-                $realState->photos()->createMany($imagesUploaded);
-            }*/
+                $product->images()->createMany($imagesUploaded);
+            }
 
             return response()->json([
                 'data' => [
