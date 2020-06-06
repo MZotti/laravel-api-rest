@@ -18,7 +18,7 @@ class ProductsController extends Controller
     
     public function index()
     {
-        $product = $this->product->with('tags')->paginate('10');
+        $product = $this->product->with('tags')->with('images')->paginate('10');
 
         return response()->json($product, 200);
     }
@@ -38,17 +38,20 @@ class ProductsController extends Controller
             if($images){
                 $imagesUploaded = [];
 
-                foreach($images as $image){
+                foreach($images as $key => $image){
                     $path = $image->store('images', 'public');
-                    $imagesUploaded[] = ['image_name' => $path, 'is_thumb' => false];
+                    $imagesUploaded[] = ['image_name' => $path, 'is_thumb' => $key == 0 ? true : false ];
                 }
 
                 $product->images()->createMany($imagesUploaded);
             }
+
+            //dd($product);
             
             return response()->json([
                 'data' => [
-                    'msg' => 'Produto cadastrado com sucesso!'
+                    'msg' => 'Produto cadastrado com sucesso!',
+                    'id' => $product['id']
                 ]
             ], 200);
         }catch(\Exception $e){
@@ -60,7 +63,7 @@ class ProductsController extends Controller
     public function show($id)
     {
         try{
-            $product = $this->product->with('tags')->findOrFail($id);
+            $product = $this->product->with('tags')->with('images')->findOrFail($id);
 
             return response()->json([
                 'msg' => 'Produto encontrado!',
