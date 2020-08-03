@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Api\ApiMessages;
 use App\Http\Controllers\Controller;
-use App\ProductImage;
+use App\Models\ProductImage;
 use App\Http\Requests\ProductImagesRequest;
 use Illuminate\Support\Facades\Storage;
 

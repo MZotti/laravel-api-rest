@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Api\ApiMessages;
 use App\Http\Controllers\Controller;
-use App\Product;
+use App\Models\Product;
+use Illuminate\Http\Request;
 use App\Http\Requests\ProductRequest;
 
 class ProductsController extends Controller

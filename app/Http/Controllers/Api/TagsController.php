@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Api\ApiMessages;
 use App\Http\Controllers\Controller;
-use App\Tag;
+use App\Models\Tag;
 use App\Http\Requests\TagRequest;
 
 class TagsController extends Controller

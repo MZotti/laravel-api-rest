@@ -18,15 +18,25 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+
+
 Route::namespace('Api')->group(function(){
-    Route::name('products.')->group(function(){
-        Route::resource('products', 'ProductsController');
+
+    Route::name('login.')->group(function(){
+        Route::post('login', 'AuthController@login');
     });
-    Route::name('tags.')->group(function(){
-        Route::resource('tags', 'TagsController');
+
+    Route::group(['middleware' => 'auth:api'], function ($route) {
+        Route::name('products.')->group(function(){
+            Route::resource('products', 'ProductsController');
+        });
+        Route::name('tags.')->group(function(){
+            Route::resource('tags', 'TagsController');
+        });
+        Route::name('images.')->prefix('images')->group(function(){
+            Route::delete('/{id}', 'ProductImagesController@remove')->name('delete');
+            Route::patch('/set-thumb/{photoId}/{realStateId}', 'ProductImagesController@setThumb')->name('setThumb');
+        });
     });
-    Route::name('images.')->prefix('images')->group(function(){
-        Route::delete('/{id}', 'ProductImagesController@remove')->name('delete');
-        Route::patch('/set-thumb/{photoId}/{realStateId}', 'ProductImagesController@setThumb')->name('setThumb');
-    });
+    
 });
